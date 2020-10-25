@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.co.beniodev.combinatoricsbuilder.controller.MainScreenController">
+
+   <children>
+      <Pane fx:id="paneBackground" layoutX="15.0" layoutY="19.0" prefHeight="460.0" prefWidth="700.0" style="-fx-border-color: black;" />
+      <CheckBox fx:id="checkboxWire" layoutX="15.0" layoutY="495.0" mnemonicParsing="false" text="Create Wire" />
+   </children>
+</Pane>

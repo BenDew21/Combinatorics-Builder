@@ -1,0 +1,6 @@
+/.gradle/*
+fileChanges
+/build/*
+/.idea
+/gradle/*
+/gradle/*
