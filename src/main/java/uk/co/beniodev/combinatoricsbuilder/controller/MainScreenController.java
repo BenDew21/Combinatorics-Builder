@@ -1,29 +1,54 @@
 package uk.co.beniodev.combinatoricsbuilder.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Pair;
 import uk.co.beniodev.combinatoricsbuilder.controls.*;
+import uk.co.beniodev.combinatoricsbuilder.utilities.ControlEventHandler;
 import uk.co.beniodev.combinatoricsbuilder.utilities.WireStatus;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainScreenController {
 
+    /** Width of the squares in the backing grid **/
     private int squareWidth = 10;
 
+    /** Background Pane **/
     @FXML
     private Pane paneBackground;
 
+    /** Checkbox for drawing wires **/
     @FXML
     private CheckBox checkboxWire;
 
+    @FXML
+    private Pane paneNOTGate;
+
+    EventHandler controlHandler = new EventHandler<MouseEvent>() {
+        boolean isAdded = false;
+        NOTGate gate = new NOTGate();
+
+        @Override
+        public void handle(MouseEvent event) {
+            Pair<Double, Double> snap = calculateSnap(event.getX(), event.getY());
+            gate.setPosition(snap.getKey(), snap.getValue());
+            if (!isAdded) {
+                paneBackground.getChildren().add(gate.getControl());
+                isAdded = true;
+            }
+        }
+    };
+
+    /**
+     * Initialise the view
+     */
     @FXML
     private void initialize() {
         generateBackground();
@@ -63,8 +88,25 @@ public class MainScreenController {
         paneBackground.getChildren().add(pane);
         pane.setLayoutX(160 - 10);
         pane.setLayoutY(70 + 10);
+
+        paneNOTGate.setOnMouseClicked(event -> {
+            NOTGate gate = new NOTGate();
+
+            ControlEventHandler handler = new ControlEventHandler(paneBackground, gate);
+            paneBackground.addEventHandler(MouseEvent.MOUSE_MOVED, handler);
+
+            paneBackground.setOnMouseClicked(event1 -> {
+                paneBackground.removeEventHandler(MouseEvent.MOUSE_MOVED, handler);
+            });
+        });
     }
 
+    /**
+     * Calculate the new line position to snap with the grid
+     * @param x Cursor X position
+     * @param y Cursor Y position
+     * @return The snapped position
+     */
     private Pair<Double, Double> calculateSnap(double x, double y) {
         double newX = 0, newY = 0;
 
@@ -78,7 +120,7 @@ public class MainScreenController {
         }
 
         if (yMod < squareWidth) {
-            newY = y - squareWidth;
+            newY = y - yMod;
         } else {
             newY = y - yMod + squareWidth;
         }
@@ -86,6 +128,9 @@ public class MainScreenController {
         return new Pair<>(newX, newY);
     }
 
+    /**
+     * Generate the background grid
+     */
     private void generateBackground() {
         double width = 700;
         double height = 460;
